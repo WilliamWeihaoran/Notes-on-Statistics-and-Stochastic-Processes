@@ -1,0 +1,58 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{MyPreambles}
+\usepackage{import}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{paracol}
+
+
+\setlength{\headheight}{35pt}
+\setlist{noitemsep}
+\setlength\intextsep{0pt}
+\setlist[description]{noitemsep, topsep=0pt, leftmargin=*}
+
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{fontspec} % if using XeLaTeX/LuaLaTeX
+% \usepackage{inconsolata} % for nicer \ttfamily with pdfLaTeX
+\usepackage{minted}
+
+\definecolor{codebg}{RGB}{245,245,248}
+
+
+\title{Notes on DS 4400: Machine Learning}
+\author{William Wei}
+\date{September 2026}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\pagebreak
+
+
+ 
+\input{Lectures/U1}
+%\input{Lectures/U2}
+%\input{Lectures/U3}
+%\input{Lectures/U4}
+
+% (Lessons 0–4) Probability distributions, Bayes' theorem, Bayesian networks, and the linear algebra basics (dot products, covariance, projections) everything else builds on.
+
+% Unit 2: Regression 
+% (Lessons 5–8) k-NN, OLS, cross-validation, bias-variance tradeoff, and Ridge regression — your first complete "build it, evaluate it, improve it" modeling cycle.
+
+% Unit 3: Classification 
+% (Lessons 9–15) Metrics, gradient descent, logistic regression, softmax, Lasso/Elastic Net, and SVMs — different mathematical routes to the same goal of drawing decision boundaries.
+
+% Unit 4: Trees & Dimensionality Reduction 
+% (Lessons 16–21) Decision trees, random forests, entropy/information theory, PCA, and LDA/QDA — a shift from linear boundaries to splitting rules and structural compression.
+
+% Unit 5: Clustering & Applications 
+% (Lessons 22–25) K-means, hierarchical clustering, KDE, ethics, and the closing research application — finding structure without labels, then tying it back to real use.
+
+
+\end{document}

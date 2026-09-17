@@ -1,0 +1,494 @@
+\pagebreak
+\section{Dynamic Programming and Greedy Methods}
+
+\subsection{Lecture 6: Dynamic Programming 1}
+\begin{multicols}{2}
+Dynamic programming (DP) only differ from divide and conquer (DaC) algorithms in that \textbf{DaC divide up problems into separate subproblems, while DP divide up problems into overlapping subproblems.}
+
+If we have already calculated a value before, we should not forget it. We store those values into a table and refer to it later when needed. 
+
+
+\begin{leftbar}
+\textbf{Weighted Interval Scheduling Problem}
+\begin{itemize}
+        \item Give a list of $n$ jobs $J_i$
+        \item $J_i$ has a start $s_i$ and finish time $f_i$.
+        \item If two jobs' time rages overlap, they are incompatible. 
+        \item Each job comes with an associated weight $w_i$, representing their value.
+        \item \textbf{Goal} Find the \textit{maximum weight subset} of mutually compatible jobs.
+    \end{itemize}
+\end{leftbar}
+\begin{analysis}
+    We need to figure out how to break it up into subproblems. Brute force gives $2^n$ subsets, which is huge. If we can solve for the first $i -1$ jobs, perhaps we can solve until job $i$. Therefore, \textit{we sort the jobs by their finish time $f_i$}. Define $OPT(i)$ as the \textit{maximum weight subset possible} using jobs $1$ to $i$. Our new \textbf{goal} is to find $OPT(i)$ in terms of $OPT(1), \ldots, OPT(i - 1)$. 
+
+    To find $OPT(i)$, 
+    
+    \begin{itemize}
+        \item If we do not want to pick $J_i$, then $OPT(i) = OPT(i - 1)$. 
+        \item If we do wish to pick $J_i$, then we need to pick the maximum jobs from $1 ,\ldots, i - 1$ that do not conflict with $J_i$. We find the largest index $j < i$ that does not conflict with $i$. Redefine this index $j = p_i$, which can be found via binary search. 
+    \end{itemize}
+    This process gives a Bellman Optimality Equation 
+    $$
+    OPT(i) = 
+    \begin{cases}
+        0 & i = 0 \\
+        \max(OPT(i - 1), w_i + OPT(p_i)) & i > 0
+    \end{cases}
+    $$
+\end{analysis}
+This will take a total of $O(n \log n)$ time. 
+
+\begin{leftbar}
+    \textbf{Maximum Grid Path Sum}
+    \begin{itemize}
+        \item \textbf{Input} an $n \times m$ grid of positive numbers.
+        \item The path starts on top left, only moves right or down on each step, ends on bottom right.
+        \item We sum the elements along the path
+        \item \textbf{Goal} Find maximum path sum among all sums.
+    \end{itemize}
+\end{leftbar}
+
+\begin{analysis}
+    Brute force gives about $2^{2n}$ paths for an $n \times m$ grid, which is too large. We use the same idea as we did in WIS, that is, dividing the problem into two subproblems, namely $(n -1) \times m$ and $n \times (m - 1)$. If the grid has size $1 \times 1$, the solution is trivial. If the size was $2\times 2$, there are only 2 solutions. Then when the sizes become $2\times 3$ or $3\times2$, there are only 3 possible solutions. We therefore try to reduce the problem into smaller grids. Below is the Bellman Optimality Equation
+    $$
+    S(n,m) = A[n,m] + \max(S(n - 1, m), S(n, m - 1)),
+    $$
+    where $A[n,m]$ is the $(n,m)$ element, which is on the bottom right corner. The intuition is that, if we were to come to the bottom right corner from the left, we would use the value $S(n - 1, m)$. If we came from the top, we would use the value $S(n, m - 1)$. For a visual, we can populate the grid with the maximum sum path that will lead to that point. Just apply the $S(n,m)$ formula to the desired point $(i, j)$. 
+
+    Note that this algorithm using DP will only take $O(mn)$ time and $O(n)$ space. 
+\end{analysis}
+\end{multicols}
+
+\newpage
+\subsection{Lecture 7: Dynamic Programming 2 - Sequences}
+\begin{multicols}{2}
+\begin{definition}[Sequences]
+    A sequence $s_n$ is a function from the set $\{n \in \Z : n \geq m\}$ to anything. A sequence $t_n$ is a subsequence of $s_n$ if and only if there exists an increasing map $\sigma : \N \to \N$ such that $\sigma(k) = n_k$ for $k \in \N$. That is, $t_k = t(k) = s\circ \sigma(k) = s(n_k) = s_{n_k}$. 
+\end{definition}
+
+\begin{leftbar}
+    \textbf{Longest Increasing Subsequence (LIS)}
+    
+    Given a sequence of integers, what is the length of the longest increasing subsequence?
+\end{leftbar}
+\begin{analysis}
+    We apply the strategy of dynamic programming again. For the input $x = (x_1, \ldots, x_n)$, define $LIS(j)$ to be the length of the LIS of $x_1, \ldots, x_j$. Note that for $LIS(j+1)$, if we naively compare $x_j$ and $x_{j+1}$, it does not solve the problem, since the increasing \textit{subsequence} may not include $x_j$. Therefore, we enforce that $LIS(j)$ must end with $x_j$. This means that the new LIS might be shorter than the real LIS at $j$, but this convention enables us to recurse up to $j$ and obtain our results. 
+
+    Suppose there is a $i < j$ such that $x_i < x_j$, then we append $x_j$ to the end of the LIS ending with $x_i$. This appending operation will increase the length by $1$. If we perform this operation for all $i < j$ and $x_i < x_j$, we have succeeded in recusing. Mathematically, 
+    $$
+    LIS(j) = 
+    \begin{cases}
+        1 & j = 0 \\
+        1 + \max_{1 \leq i < j, x_i < x_j}LIS(i) & \textrm{otherwise}
+    \end{cases}
+    $$
+    The notation could be confusing. $LIS(n)$ is not what we want for a sequence of length $n$. This is because we enforced that $LIS(n)$ to be the length of the increasing subsequence that end with $x_n$, which may or may not be included in the actual longest increasing subsequence. What we truly need is $\max_{1 \leq i \leq n} LIS(i)$. 
+
+    The runtime of this algorithm is $O(n^2)$. This is because we need $O(i)$ time to find $LIS(i)$, and $\sum_{1\leq i \leq n}O(i) = O(n^2)$. Same idea from this algorithm also works for decreasing, non-increasing, and non-decreasing subsequences. 
+\end{analysis}
+\begin{leftbar}
+    \textbf{Sequence Similarity Problem}
+    
+    Given two sequences, how do we measure how close they are? 
+\end{leftbar}
+\begin{definition}[Edit Distance]
+    Given two strings $x\in \Sigma^n$ and $y \in \Sigma^m$, the edit distance is the number of insertions, deletions, and substitutions required to turn $x$ into $y$. 
+\end{definition}
+\begin{definition}[Alignment and cost]
+    An alignment is a mapping from $x$ to the a subsequence of $y$. Given an alignment between two strings, the cost of such alignment is the number of mismatched positions. 
+\end{definition}
+Note that the edit distance can also be defined as the cost of minimum cost alignment. 
+
+\begin{analysis}
+    In an alignment of $x$ and $y$, the last column could have the following possibilities. 
+    \begin{itemize}
+        \item $(x_i, \cdot)$: delete from $x$
+        \item $(\cdot, y_i)$: insert into $x$
+        \item $(x_i, y_i)$: matching characters
+        \item $(x_i, y_i)$: mismatching characters
+    \end{itemize}
+
+    Define $OPT(i, j)$ to be the edit distance of strings $x = x_1\cdots x_i$ and $y = y_1\cdots y_j$. We analyze the last column in cases again: 
+        \begin{itemize}
+        \item $(x_i, \cdot)$ costs $1 + OPT(i - 1, j)$. 
+        \item $(\cdot, y_j)$ costs $1 + OPT(i, j - 1)$.
+        \item matching $(x_i, y_j)$ costs $OPT(i - 1, j - 1)$.
+        \item mismatching $(x_i, y_j)$ costs $1 + OPT(i - 1, j - 1)$.
+    \end{itemize}
+    It is natural to take the minimum of all of those four cases above, because we want the minimum amount of edits to transform $x$ into $y$. Sometimes deletion could benefit us in the short term, but it could actually just be a mismatching character. This is why we take the minimum of all of them, so that we try out all of them and find out the least number of edits. Define as a shorthand 
+    $$
+    \min_{i, j} opt(i,j) = \min
+    \begin{cases}
+        1 + OPT(i - 1, j) \\
+        1 + OPT(i, j -1) \\
+        OPT(i - 1, j -1)
+    \end{cases} 
+    $$
+    Note that if $(x_i, y_j)$ mismatch, we must add an operation outside of the $\min$, since no matter what the minimum edits the previous OPTs give us, we still need to make an operation in the current step. Define again a shorthand that 
+    $$
+    1 [P] = 
+    \begin{cases}
+        1 & P \\
+        0 & \textrm{not } P
+    \end{cases}
+    $$
+    As a general recursion formula, we have 
+    $$
+    OPT(i, j) = 
+    \begin{cases}
+        i & j = 0 \\
+        j & i = 0 \\
+        1[x_i\neq y_j] + \min_{i,j}opt(i,j) & \textrm{otherwise}
+    \end{cases}
+    $$
+\end{analysis}
+\begin{example}
+    The edit distance between \say{SALT} and \say{SMALL} is $2$. This can be seen in the table below 
+
+    \begin{center}
+        
+    \begin{tabular}{c|c c c c c c}
+         &  & S & M & A & L & L \\
+         \hline 
+         & 0 & 1 & 2 & 3 & 4 & 5 \\
+        S & 1 & \textbf{0} & \textbf{1} & 2 & 3 & 4 \\
+        A & 2 & 1 & 1 & \textbf{1} & 2 & 3 \\
+        L & 3 & 2 & 2 & 2 & \textbf{1} & 2 \\
+        T & 4 & 3 & 3 & 3 & 2 & \textbf{2}
+    \end{tabular}
+    \end{center}
+
+    
+    Note that we can also backtrack to see where we need to make modifications to \say{SMALL} by looking at the path that led us to the number $2$ on the bottom right corner. 
+\end{example}
+\end{multicols}
+
+\subsection{Lecture 8: Dynamic Programming 3 - Longest Alternating Subsequence}
+\begin{multicols}{2}
+\begin{definition}
+    A sequence is alternating iff the subsequence alternates from increasing and decreasing for one term. 
+\end{definition}
+
+\begin{leftbar}
+    \textbf{Longest Alternating Subsequence (LAS)} 
+
+    Given a sequence, what is the length of its longest alternating subsequence. 
+\end{leftbar}
+
+    Note that the behavior of such subsequence depends on the values in the sequence. If the first element is small, it might be good to look for a larger value as the next element. Define now $\inc(i)$ and $\dec(i)$ as the length of the LAS which ends at index $i$, in increasing or decreasing direction, respectively. We do not wish to dictate the direction before we try out both, hence yielding the mutual recursion.  
+    \begin{align*}
+    \displaystyle
+    \inc(i) &= 
+    \begin{cases}
+        1 & i = 1 \\
+        1 + \max_{\substack{j < i \\ a_j < a_i}}\dec(j) & \textrm{otherwise}
+    \end{cases} \\ 
+    \dec(i) &= 
+    \begin{cases}
+        1 & i = 1 \\
+        1 + \max_{\substack{j < i \\ a_j > a_i}} \inc(j) & \textrm{otherwise}
+    \end{cases}
+    \end{align*}
+    This gives a formula for $LAS(i)$. 
+    $$
+    LAS(i) = \max_{1 \leq i \leq j}\{\max(\inc(i), \dec(i)\}.
+    $$
+
+
+\begin{leftbar}
+    \textbf{The Knapsack Problem}
+
+    Input:
+    \begin{itemize}
+        \item $n$ items, each with a value $v_i > 0$ and a weight $w_i > 0$, with $v_i, w_i \in \N$.
+        \item Knapsack with a capacity of $W$. 
+    \end{itemize}
+    \textbf{Goal:} Pack knapsack for maximum value. 
+\end{leftbar}
+Note that this is similar to the WIS problem (from 2.1). Define $OPT(i,w)$ as the max value of items $1, \ldots, i$ with weight limit $w$. Therefore, the goal is to find $OPT(n, W)$. There are a few different cases. 
+\begin{itemize}
+    \item True optimal does not pick $i$, giving $OPT(i, w) = OPT(i - 1, w)$. 
+    \item True optimal picks $i$, giving $OPT(i, w) = v_i + OPT(i -1, w - w_i)$.  
+\end{itemize}
+Note that we reduce the budget in the second case. 
+
+$$
+OPT(i, w) = 
+\begin{cases}
+    0 & i = 0 \\
+    OPT(i - 1, w) & w_i > w \\
+    \max\left(\substack{OPT(i - 1, w), \\ v_i + OPT(i - 1, w - w_i)}\right) & \textrm{else}
+\end{cases}
+$$
+\begin{analysis}
+    Here, the number of subproblems is $n \cdot W$, and the time per subproblem is only $O(1)$. This gives a total time of $O(nW)$. It is critical to note that even though $W$ is not an input size -- it's just a value -- it still shows up in the run time. 
+\end{analysis}
+\end{multicols}
+
+\newpage
+\subsection{Lecture 9: Dynamic Programming 4}
+
+\begin{paracol}{2}
+\begin{leftbar}
+    \textbf{Maximum Sum Subarray}
+
+    Given an array $A = [a_i]_{i \leq n}$ of $n$ integers, what is the maximum sum out of all subarrays? That is, find 
+    $$
+    \max_{i \leq j}\sum_{k = i}^j a_k
+    $$
+\end{leftbar}
+We have seen a few different ways to approach this problem: 
+\begin{itemize}
+    \item \textbf{Naive algorithm} cubic time (3 nested loops)
+    \item \textbf{Precomputed sums} quadratic time (innermost loop is replaced with recomputed sum)
+    \item \textbf{Divide and conquer} takes $O(n\log n)$ time. 
+\end{itemize}
+
+Define $MMS(j)$ to be the maximum subarray that ends with the element $a_j$. At the position $j$, we have a choice. We either look at $MMS(j)$ and find it useful and use it after adding $a_j$, or we disregard it and simply use $a_j$. This works because either way, we include $a_j$ as an element. This yields the Bellman equation 
+$$
+MSS(j) = 
+\begin{cases}
+    a_j & j = 1 \\
+    \max\{a_j, MSS(j - 1) + a_j\} & \textrm{otherwise}
+\end{cases}
+$$
+To find the true $MSS$, we take $\max_{1 \leq j \leq n} \{MSS(j)\}$. 
+
+The algorithm \ref{MSS} is also a space-efficient way to compute $MSS$. 
+
+On the right we also present some space-efficient algorithms for previous DP problems.  
+
+\switchcolumn
+\begin{algorithm}
+    \caption{Saving Memory with MSS}
+    \label{MSS}
+    \begin{algorithmic}[1] 
+    \Require An array $A$ of $n$ integers. 
+    \Ensure The maximum possible sum over all subarrays over $A$. 
+    \State $curr = \max (0, a_1)$
+    \State $best = -\infty$
+    \For{$j \in [2, \ldots, n]$}
+        \State $curr = \max(a_j, a_j + curr)$
+        \State $best = \max(best, curr)$
+    \EndFor
+    \State \Return $best$
+    \end{algorithmic}
+\end{algorithm}
+\bigskip
+
+\begin{algorithm}
+        \caption{Saving Memory with Fibonacci}
+        \label{Fibonacci}
+    \begin{algorithmic}[1]
+    \Require An integer $n \geq 0$. 
+    \Ensure The $n$th Fibonacci number $F_n$. 
+    \State $a,b = 0,1$
+    \State $f = null$
+    \For{$i = 2, \ldots, n$}
+        \State $f = a + b$
+        \State $a, b = b, f$
+    \EndFor
+    \State \Return $f$. 
+    \end{algorithmic}
+\end{algorithm}
+\bigskip
+\begin{algorithm}
+\caption{Saving Space with Max GPS}
+    \begin{algorithmic}[1]
+        \Require $n \times m$ grid $A$ of positive numbers. 
+        \Ensure Maximum path sum $\sum_{(i, j) \in P}A[i, j]$ in a path $P$ from $A[1, 1]$ to $A[n, m]$. 
+        \State Initialize two $n + 1$ length arrays $curr$ and $prev$ to all $0$. 
+        \For{$i = 1, \ldots, n$}
+            \For{$j = 1, \ldots, m$}
+                \State $curr[j] = A[i, j] + \max\{prev(j), curr(j - 1)\}$
+            \EndFor
+            \State $prev = curr$
+        \EndFor
+        \State \Return $curr[m]$. 
+    \end{algorithmic}
+\end{algorithm}
+\switchcolumn
+
+Here we look at the DP recurrence of the DroDroDur. Define $M(f, d)$ to be the minimum drops needed to find floor $x$ if there are $f$ floors and $d$ drones still left. We would like to find the minimum number of drops required, as an actual number. We have 
+
+\switchcolumn
+\bigskip
+Below is the DroDroDur recurrence, with the output of $M(n, k)$. 
+$$
+M(f, d) =
+\begin{cases}
+    0 & f = 0 \\
+    f & d \leq 1 \\
+    1 + \min_{1 \leq j \leq f} \Bigl\{\max{\left(\substack{M(j - 1, d - 1) \\ M(f - 1, d)}\right)}\Bigl\} & \textrm{otherwise}
+\end{cases}
+$$
+\switchcolumn
+\end{paracol}
+
+
+\newpage
+\subsection{Lecture 10: Greedy Algorithm}
+\begin{multicols}{2}
+    \begin{leftbar}
+        \textbf{Unweighted Scheduling Problem}
+
+        \begin{itemize}
+            \item Input: $n$ intervals $(s(i), f(i))$ with weights $v_i = 1$
+            \item A compatible schedule $S \subset \{1, \ldots, n\}$ with no $i, j \in S$ overlap. 
+        \end{itemize}
+    \end{leftbar}
+    Note that this is similar to the weighted interval scheduling problem, except here, the weights are just $1$ for each job. The runtime for the DP algorithm we came up with for WIS was $O(n\log n)$ time, but we may not need such a complicated algorithm for this one, since all we are trying to do is to pick the most number of jobs. 
+
+    All greedy algorithms have the following pattern 
+    \bigskip
+    \begin{algorithm}[H]
+        \caption{Greedy Algorithm Pattern}
+        \label{GreedyPattern}
+        \begin{algorithmic}
+        \State Sort choices by \textbf{some method}
+        \State $S = \{\}$
+        \For{$1 \leq i \leq n$}
+            \If{$i$ is compatible}
+                \State $S = S \cup \{i\}$
+            \EndIf
+        \EndFor
+        \State\Return $S$
+        \end{algorithmic}
+    \end{algorithm}
+
+    According to algorithm \ref{GreedyPattern}, we need to sort the jobs based on some criteria. There are a few possible ones: 
+    \begin{itemize}
+        \item Interval length
+        \item Earliest start time
+        \item Fewest conflicts
+        \item \textbf{Earliest finish time}
+    \end{itemize}
+    The correct greedy rule here is that we sort by the earliest finish time, with the intuition that we want to free up resources as soon as possible. 
+
+    The intuition needs to be tested for correctness. We here present a proof. 
+    \begin{prop}
+        To solve the Unweighted Scheduling Problem, we need to sort the jobs by their earliest finish time. 
+    \end{prop}
+    \begin{proof}
+        This proof is called \say{Greedy stays ahead}, meaning that when the greedy $G$ completes $k$ intervals, no other scheduling can complete equal to or more than $k$ intervals. 
+        
+        Consider $G = \{i_1, \ldots, i_r\}$ to be the greedy schedule and $O = \{j_i,\ldots, j_r\}$ to be a supposedly another optimal schedule. We need to show that for all indices $t$, we have $f(i_t) \leq f(j_t)$, where $f$ is the finish time. Assume again for contradiction that there exists some interval $k$ that $O$ picks such that $f(i_r) \leq f(j_r) \leq s(k)$. If such $k$ exists, then Greedy is not optimal. However, such $k$ cannot exist, since Greedy searches over every single job and finds all compatible ones. So no such $k$ can exists. 
+
+        Here, we just need to prove that $f(i_t) \leq f(j_t)$ for all $1 \leq t \leq r$, which can be done by induction. It is easy to see for the base case that $f(i_1) \leq f(j_1)$, since it is by the design of the algorithm that Greedy always chooses the earliest finish time. Now we assume that $f(i_t) \leq f(j_t)$ for all $t \leq k$ and try to prove $f(i_{k + 1}) \leq f(j_{k + 1})$. The next Greedy choice $i_{k + 1}$ is the earliest-finishing interval that starts after $f(i_k)$. Since $f(i_k) \leq f(j_k)$, we have $s(j_{k+1})$ is also after $f(i_k)$. Therefore, when Greedy picked $i_{k + 1}$, the option $j_{k + 1}$ was available. The Greedy chooses the one that finishes earliest, so $f(i_{k + 1}) \leq f(j_{k + 1})$. 
+        
+        
+        Consider the following inequalities: 
+        \begin{itemize}
+            \item $f(i_k) \leq f(j_k) \leq s(j_{k + 1}) \leq f(j_{k + 1})$
+            \item $f(i_k) \leq s(i_{k+1}) \leq f(i_{k + 1})$. 
+        \end{itemize}
+        
+    \end{proof}
+\end{multicols}
+
+\newpage
+\subsection{Lecture 11: Greedy Algorithm 2}
+\begin{multicols}{2}
+\begin{leftbar}
+    \textbf{Minimum Lateness Scheduling}
+
+    Given $n$ jobs with length $t_i$ and unique deadlines $d_i$. The lateness of job $i$ is defined as $L(i) = \max(0, f_i - d_i)$. We want to minimize the lateness of the schedule $S$ by minimizing $L(S) = \max_iL(i)$
+\end{leftbar}
+Note that technically we need to find an ordering of jobs, because we can start a job immediately after we finish the previous one. The optimal solution will not have any idle time. There are a few possible schedulings: 
+\begin{itemize}
+    \item Shortest lengths first
+    \item \textbf{Earliest deadline first}
+    \item Minimum slack $d_i - t_i$ first
+\end{itemize}
+In fact, earliest deadline first is the correct answer. 
+\bigskip
+\begin{algorithm}[H]
+\caption{Minimum Lateness Scheduling}
+    \begin{algorithmic}[1]
+        \State Sort input so that $d_1\leq d_2 \leq \cdots \leq d_n$ 
+        \State Initialize $s$, $f$ arrays for start and finish times
+        \State $r = 0$
+        \For{$1 \leq i \leq n$}
+            \State $s[i] = r$
+            \State $f[i] = s[i] + t_i$
+            \State $r = f[i]$
+        \EndFor
+        \State\Return $s, f$
+    \end{algorithmic}
+\end{algorithm}
+
+We present a proof of optimality, known as the exchange argument. 
+\begin{proof}
+    We give an outline of the proof first: Let $\mathcal{O}$ be an optimal schedule. We show that $L(\mathcal{O}) \geq L(G)$. Starting with $\mathcal{O}$, incrementally make changes to make it more like $G$. This gives a sequence of schedules $\mathcal{O} = \mathcal{O}_1, \ldots, \mathcal{O}_m = G$. At each step we will show that $L(\mathcal{O}_i) \geq L(\mathcal{O}_{i+1})$, which means that the changes can only improve the schedule. Then, a chain of inequalities will show that $L(\mathcal{O}) = L(\mathcal{O}_1) \geq \cdots\geq L(\mathcal{O}_m) = L(G)$. 
+
+    Now we begin the proof. Define a pair of jobs $i, j$ such that $d_i < d_j$ but job $j$ is earlier in schedule than job $i$. We call this pair an \textbf{inversion}. Note that Greedy algorithm $G$ has no inversions by design. Suppose now each step from $\mathcal{O}_i$ to $\mathcal{O}_{i+1}$ is removing an inversion. There can be at most ${n\choose 2}$ inversions in the case that every pair of jobs is inverted. Therefore, within ${n\choose 2}$ steps, every $\mathcal{O}$ can be converted to some $G$. If we can prove that $L(\mathcal{O}_i) \geq L(\mathcal{O}_{i+1})$, in other words, removing inversions does not increase lateness, then we're done. 
+
+    Proving that removing inversions does not increase lateness involves $3$ steps: 
+    \begin{itemize}
+        \item \textbf{If there is an inversion, then there is a consecutive inversion. }
+
+        Suppose that there exists an inversion pair $i < j$ such that $d_i > d_j$. If $j = i + 1$, then we're done. Otherwise, we look at $d_{i + 1}$. If $d_i > d_{i + 1}$, then we're done. If not, we look at the pair $d_{i + 1}$ and $d_{i + 2}$. If $d_{i + 1} > d_{i + 2}$, we're done. If not, we keep on going. In the worst case, we get an increasing sequence of $d_j < d_i < d_{i + 1} < d_{i + 2} < \cdots < d_{j - 1}$, then we have found a consecutive inversion pair of $d_{j - 1}$ and $d_j$. 
+        \item \textbf{Swapping inverted jobs reduces an inversion.}
+
+        This is true by definition of inversion pairs. 
+        \item \textbf{Swapping consecutive inversions does not increase lateness.} 
+
+        Suppose that the pair $j, i$ was a consecutive inversion (in other words, $d_i < d_j$) with $s_j < f_j = s_i < f_i$. Now, we swap the inversion pair and get $s_j = s'_i < f'_i = s'_j < f'_j = f_i$. Since the order is $j, i$ before the jobs were swapped, after the swapping, the lateness of $i$ cannot increase since it is now being done earlier than before. Now, $l_j = f_j - d_j$ and $l'_j = f'_j - d_j$, but 
+        \begin{align*}
+            l'_j &= f'_j - d_j \\
+            &= f_i - d_j \\
+            &\leq f_i - d_i
+        \end{align*}
+        This shows that after swapping of consecutive inversion, the lateness of $i$, of $j$, and of $k$ for any $k \neq i, j$ does not increase.
+    \end{itemize}
+    This proves the inequality that 
+    $$L(\mathcal{O}) = L(\mathcal{O}_1) \geq \cdots\geq L(\mathcal{O}_m) = L(G)$$
+    where there are $0 \leq m \leq {n \choose 2}$ number of inversions. 
+\end{proof}
+Note that with $n$ jobs, the algorithm minimizes lateness in $O(n \log n)$. 
+
+\begin{leftbar}
+    \textbf{Fractional Knapsack Problem}
+
+    We have $n$ items, each with a value of $v_i > 0$ and a weight $w_i > 0$. We want to maximize the value while packing the knapsack with capacity $W$. Now we are allowed to pick a fractional amount of each item. 
+\end{leftbar}
+
+In other words, we want a list $[f_1, \ldots, f_n]$ denoting the fraction of each item picked. The knapsack constraint is 
+$$
+\sum_{1 \leq i \leq n}f_iw_i \leq W. 
+$$
+Our goal is to find
+$$
+\max \sum_{1 \leq i \leq n}f_iv_i
+$$
+The Greedy algorithm is fairly simple. 
+\bigskip
+\begin{algorithm}[H]
+\caption{Fractional Knapsack Problem}
+\begin{algorithmic}[1]
+    \State Sort items in decreasing order of $v_i/w_i$. This represents the unit weight. 
+    \State $w = W$, $f = [0, \ldots, 0]$
+    \For{$1 \leq i \leq n$}
+        \If{$w_i < w$}
+            \State $f[i] = 1$, $w = w - w_i$
+        \Else 
+            \State $f[i] = w/w_i$, $w = 0$
+        \EndIf
+        \If{$w \leq 0$}
+        \State break
+        \EndIf
+    \EndFor
+    \State \Return $f$
+\end{algorithmic}
+\end{algorithm}
+Now we prove that Greedy $G$ is optimal. 
+\begin{proof}
+    Suppose $G = [f_1, \ldots, f_n]$ is Greedy and $\mathcal{O} = [r_1, \ldots, r_n]$ is an optimal algorithm. Assume that the items are ordered in decreasing order of $v_i/w_i$, which is their unit weight. 
+
+    Find the first spot $i$ such that $f_i \neq r_i$. Greedy implies that $f_i > r_i$. This means that there exists $j > i$ with $r_j > f_j$. In other words, the optimal solution has to use up the weight somewhere else. Consider 
+    $$
+    \mathcal{O}' = \{r_1, \ldots, r_i + \epsilon, \ldots, r_j - (\epsilon w_i)/w_j, \ldots, r_n\}
+    $$
+    The value of $\mathcal{O}'$ is the value of $\mathcal{O}$ plus $\epsilon v_i - ((\epsilon w_i)/w_j)v_j$, which is greater than $0$. This is a contradition since $\mathcal{O}$ is optimal. 
+\end{proof}
+\end{multicols}

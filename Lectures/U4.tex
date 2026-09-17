@@ -1,0 +1,68 @@
+\pagebreak
+\section{Flows, Linear Programming, and Complexity}
+
+\subsection{Lecture 18: Introduction to Network Flows}
+
+\begin{multicols}{2}
+\begin{definition}
+The flow network $N = (G, c(e), s,t)$ has directed $G = (V, E)$, edge capacities $c: E \to \R^{\geq 0}$, and the source $s$ and sink $t$. A flow is a path such that it uses some of the capacity along the edge. 
+\end{definition}
+
+A few common questions we wish to answer: 
+\begin{itemize}
+    \item Find flow through an edge $f : E \to \R^{\geq 0}$. How much can flow through? 
+    \item Remove edges to stop flow from $s$ to $t$. What is the min capacity removed? 
+\end{itemize}
+Note a few things: 
+\begin{itemize}
+    \item The capacities are constraints. That is, $f(e) \leq c(e)$. 
+    \item For all vertices except the source and sink, its in-flow must equal to the out-flow. That is, $$\sum_{e = (u, v)} f(e) = \sum_{e = (v,w)} f(e)$$
+    \item The value of the flow is constant and defined as 
+    $$
+    \abs{f} = \sum_{e = (s,u)}f(e) - \sum_{e = (w,s)}f(e)
+    $$
+\end{itemize}
+
+\begin{definition}
+    A \textbf{cut} is a pair of set of vertices $(A, B)$ separates source $s \in A$ and sink $t \in B$. Note that $A \cup B = V$. The \textbf{cut capacity}, denoted by $\|A,B\|$, is the sum of capacities of edge from $A$ to $B$. 
+\end{definition}
+
+We now investigate more deeply. 
+\begin{lemma}
+    For any flow $f$ and any cut $(A,B)$, the value $\abs{f}$ equals net flow from $A$ to $B$. 
+\end{lemma}
+This lemma should intuitively make sense, since the total out-flow from the source should not disappear any time in the network. 
+\begin{prop}
+    We have a pair of dualities. 
+    \begin{itemize}
+        \item \textbf{Weak duality} Any flow value is upper bounded by any cut capacity. That is, 
+        $$
+        \abs{f} \leq \|A,B\|
+        $$
+        \item \textbf{Strong duality} Maximum flow is equal to the minimum cut capacity. That is, 
+        $$
+        \max_f \abs{f} = \min_{(A,B)} \|A,B\|
+        $$
+        \item This means that if $\abs{f} = \|A, B\|$, then $f$ is a max flow and $(A,B)$ is a min cut. 
+    \end{itemize}
+\end{prop}
+The strong duality is true since $\abs{f}$ must be bounded above by every cut capacity, meaning that the maximum flow can be reaches is the minimum cut capacity. A few more useful notes: 
+\begin{itemize}
+    \item Maximum flows and minimum cuts can be computed in $O(\abs{V}\cdot \abs{E})$ time. 
+    \item If all capacities are integer $c : E \to \Z^+$, then there is a max-flow with $f: E \to \Z^+$. 
+    \item An edge is \textbf{saturated} if $f(e) = c(e)$. 
+    \item An edge is \textbf{avoided} if $f(e) - 0$. 
+    \item There's always a max flow in which only one of $f(u,v)$ and $f(v,u)$ is non-zero. 
+\end{itemize}
+
+In general, the term \textbf{reduction} means that we are converting a problem to another. Max flow and min cut are very good algorithms to reduce to, since they can help solving a large variety of optimization problems. 
+
+\begin{leftbar}
+    \textbf{Bipartite Matching}
+    \begin{itemize}
+        \item \textbf{Input} A bipartite graph $G = (V = L \cup R, E)$. 
+        \item \textbf{Output} A subset of edges such that no vertex is matched with more than one edge. 
+    \end{itemize}
+\end{leftbar}
+We can essentially reduce bipartite matching problem into a network flow problem. For vertices, we keep all old ones and add $s$ and $t$. Every edge $\{l, r\} \in E$ becomes a directed edge $(l,r) \in E$ with $\infty$ capacity. We added edges $(s,l)$ for all $l \in L$ and $(r, t)$ for all $r \in R$ with capacity $1$. Note that there is matching size $\abs{f}$ where $\abs{f}$ is the maximum flow value. Edges with $f(l,r) = 1$ give the actual matching edges where $l \in L$ and $r\in R$. 
+\end{multicols}

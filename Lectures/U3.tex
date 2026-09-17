@@ -1,0 +1,531 @@
+\pagebreak
+\section{Graph Algorithms and Advanced Data Structures}
+
+\subsection{Lecture 12: Basics of Graphs}
+
+\begin{multicols}{2}
+\begin{definition}[Graph]
+A pair $G = (V, E)$ is a graph, where $V = \{v_1, \ldots, v_n\}$ is the set of \textbf{vertices}, and $E = \{e_1, \ldots, e_m\}$ is the set of \textbf{edges}, where $e_k = \{v_i, v_j\}$ is an edge connecting two vertices. 
+
+The number of vertices ($n$) is called the \textbf{order}, and the number of edges ($m$) is called the \textbf{size}. 
+\end{definition}
+Note that the definition of graph we gave was the most generic one. For example, if a graph were to have directionality over the edges, we could change the definition of the edge to an ordered pair where $e_k = (v_i, v_j)$. 
+Here is an example of a graph. 
+$$
+\psmatrix[colsep=2cm,rowsep=1cm,mnode=circle]
+u&v&z\\
+x&y
+\ncline{-}{1,2}{1,3}
+\ncarc[arcangle=-30]{-}{1,1}{2,2}
+\ncline{->}{2,1}{1,3}
+\endpsmatrix
+$$
+In the graph above, we have $V = \{u, v, z, x, y\}$, and $E = \big\{\{v, z\}, \{u, y\}, (x, z)\big\}$. 
+\begin{definition}[Simple graph]
+    A \textbf{simple graph} is a graph that does not have any self cycles or multiple edges between the same two nodes. 
+\end{definition}
+\textbf{Unless otherwise specified, we will be working with simple graphs in this course.}
+Below is an example of a non-simple graph. 
+$$
+\psmatrix[colsep=3cm,rowsep=1cm,mnode=circle]
+[name = A] a 
+&b
+\ncarc[arcangle = 30]{-}{1,1}{1,2}
+\ncarc[arcangle = -30]{-}{1,1}{1,2}
+\nccircle[angleA = 90, armA = 0.2cm]{-}{A}{0.5cm}
+\endpsmatrix
+$$
+\begin{definition}[Basics of undirected graphs]We present a few definitions for undirected graphs. 
+\begin{itemize}
+    \item Two vertices $u, v$ in graph $G$ are \textbf{neighbors} of each other if $e = \{u,v\} \in E$. 
+    \item The number of edges incident with a vertices $v$ is called the \textbf{degree} of $v$, denoted by $\deg v$. 
+    \item A graph $H$ is a \textbf{subgraph} of $G$ if $V(H) \subset V(G)$ and $E(H) \subset E(G)$. We write $H \subset G$. 
+    \item A $u-v$ \textbf{walk} $W$ in $G$ is a sequence of vertices in $G$, beginning with $u$, ending with $v$, and such that consecutive vertices in the sequence are adjacent. The \textbf{length} of the walk $W$ is the number of edges in the sequence. 
+    \item A $u-v$ walk is \textbf{open} if $u\neq v$. A walk that is not open is \textbf{closed}. 
+    \item A $u-v$ \textbf{trail} is a $u-v$ walk in which no \textit{edge} is traversed more than once.
+    \item A $u-v$ \textbf{path} is a $u-v$ walk in which no vertices are \textit{repeated}. 
+    \item A $k$ \textbf{cycle} is a closed trail with no repeating vertices. 
+    \item Two vertices $u$ and $v$ are \textbf{connected} if there exists a $u-v$ path. A graph $G$ is \textbf{connected} if every pair of vertices is connected. A graph that is not connected is \textbf{disconnected}. 
+    \item A connected subgraph of $G$ that is not a proper subgraph of another other connected subgraph of $G$ is called a \textbf{component} of $G$. The number of components of $G$ is written as $k(G)$. Therefore, a graph $G$ is connected iff $k(G) = 1$. 
+    \item The complement $\bar{G}$ of $G$ is a graph with vertex set $V(G)$ and edge set $E(\bar{G})$ such that $uv \in E(\bar{G})$ iff $uv \notin E(G)$. 
+\end{itemize}
+    
+\end{definition}
+
+\begin{definition}[Basics of directed graphs]
+    We present a few definitions of directed graphs
+    \begin{itemize}
+        \item A directed graph is \textbf{strongly connected} if for all $u,v \in V$, there exists a $u-v$ path and $v-u$ path. 
+        \item A directed graph is \textbf{weakly connected} if when we ignore the directionality of the graph, it is connected in the unidirectional sense. 
+    \end{itemize}
+\end{definition}
+\begin{definition}[Classification of graphs] We present some common classes of graphs. 
+\begin{itemize}
+    \item A graph is \textbf{complete} if every two distinct vertices are adjacent. We denoted this by $K_n$ where $\abs{V} = n$ is the order of the graph. The size of $K_n$ is $\abs{E(K_n)} = {n\choose 2}$. 
+\end{itemize}
+\end{definition}
+\begin{theorem}[First Theorem of Graph Theory]
+If $G$ is a graph of size $m$, then 
+$$
+\sum_{v\in V(G)}\deg v = 2m
+$$
+    
+\end{theorem}
+\end{multicols}
+
+
+\subsection{Lecture 13: I missed}
+
+\newpage 
+
+\subsection{Lecture 14: BTS, DFS, and Topological Ordering}
+\begin{multicols}{1}
+\begin{definition}
+    A \textbf{binary search tree} (BTS) is a rooted tree data structure with the invariance: 
+    \begin{itemize}
+        \item The key of a node is greater than all keys in the left subtree.
+        \item The key of a node is smaller than all keys in the right subtree. 
+    \end{itemize}
+\end{definition}
+Here's an example of BTS
+$$
+\psmatrix[colsep=0.5cm,rowsep=0.5cm,mnode=circle]
+  &   &   & 4 \\
+  & 2 &   &   &   & 8 \\
+1 &   & 3 &   & 7 &   & 9
+\ncline{->}{1,4}{2,2}
+\ncline{->}{1,4}{2,6}
+\ncline{->}{2,2}{3,1}
+\ncline{->}{2,2}{3,3}
+\ncline{->}{2,6}{3,5}
+\ncline{->}{2,6}{3,7}
+\endpsmatrix
+$$
+We can do the following operations on BST: 
+\begin{itemize}
+    \item Search for a key $k$
+    \item Insert new key $k$
+    \item Delete existing key $k$
+\end{itemize}
+Every operation depends on time required for searching, which takes at best $O(\log n)$ time in the case that the tree if \say{balanced}. \textbf{Self-balancing} BTS's will re-balance itself after each operation, keeping each searching, inserting, and deleting in $O(\log n)$ time. 
+
+Some applications of BST include
+\begin{itemize}
+    \item \textbf{Sets} good for searching for elements. 
+    \item \textbf{Associative arrays} a set of keys associated with a value. 
+    \item \textbf{Priority queues} The tree stories the values of priorities, allowing for quick access to highest priority values. 
+\end{itemize}
+Note that the $\texttt{clock}$ variable means how many edges we have explored. It is bounded by $2n$, where $n$ is the number of vertices. 
+\begin{algorithm}[H]
+\caption{Depth First Search}
+    \begin{algorithmic}[1]
+    \Require  
+    \Ensure 
+    \State $G = (V, E)$ is a diagraph
+    \For{$u \in V$}
+        \State $p[u], d[u], f[u] = \texttt{null}, -1, -1$.
+    \EndFor
+    \State $\texttt{clock} = 1$
+    \Procedure{\texttt{DFS}}{$u$}
+        \State $d[u] = \texttt{clock}$
+        \State $\texttt{clock} ++$
+        \For{$(u,v) \in E$}
+            \If{$d[v] = -1$}
+                \State $p[v]= u$
+                \State $\Call{\texttt{DFS}}{v}$
+            \EndIf
+        \EndFor
+        \State $f[u] = \texttt{clock}$
+        \State $\texttt{clock}++$
+    \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+There are different kinds of edges that $\texttt{DFS}$ could return in the \textbf{tree}. These terms are relative and depends on the root we started. 
+\begin{itemize}
+    \item \textbf{Tree} edges: edges that discover new nodes. 
+    \item \textbf{Forward} edges: ancestor to descendant.
+    \item \textbf{Back} edges: descendant to ancestor.
+    \item \textbf{Cross} edges: no ancestral relation between vertices. 
+\end{itemize}
+This ordering of edges are in descending order of priority, meaning that if the edge $(a,b)$ is a forward edge (with $a$ being the parent of $b$), yet we discovered $b$ through $a$, the edge $(a,b)$ is still labeled as a tree edge. 
+
+For any directed edge $(u,v)$, we have 
+\begin{itemize}
+    \item $d[u] < d[v] < f[v] < f[u] \implies$ \textbf{tree} or \textbf{forward}
+    \item $d[v] < d[u] < f[u] < f[v] \implies$ \textbf{back}
+    \item $d[v] < f[v] < d[u] < f[u] \implies $ \textbf{cross}
+\end{itemize}
+The implementation of BST for directed and undirected graphs are the same. However, due to the lack of directionality, we only have tree of back edges in undirected graphs. (\textbf{Exercise}). 
+\begin{definition}
+    A directed acyclic graph (DAG) is a directed graph with no directed cycles. 
+\end{definition}
+Since DAG is acyclic, there is some node ordering such that all edges go left to right. Such ordering is called an \textbf{topological ordering}. 
+\begin{definition}[Topological Ordering]
+    Give a digraph $G = (V, E)$, a topological ordering is a sequence of vertices $v_1, \ldots, v_n$ such that for every directed edge $u \to v \in E$. 
+    In other words, the node $u$ appears before $v$ in the ordering. 
+\end{definition}
+
+Note that only DAG's can have topological ordering. 
+
+We have the following algorithm
+\begin{itemize}
+    \item First node has no incoming edges
+    \item Repeat
+    \begin{itemize}
+        \item Find node $u$ with incoming degree $0$.
+        \item Append $u$ to current TopOrdering.
+        \item Update in-degrees
+    \end{itemize}
+\end{itemize}
+\end{multicols}
+
+\subsection{Lecture 14: TopOrders, SCCs, BFS, Shortest Paths}
+\begin{multicols}{2}
+    Another topological ordering implementation uses DFS. It relies on the fact that a DAG does not have back edges. We can order by decreasing DFS finish time. This can be done in linear time (\textbf{Exercise}). 
+    \begin{definition}[Connected Component]
+    A connected component is maximal subgraph $V' \subset V$ that is connected in $G = (V, E)$. 
+    \end{definition}
+    We can find all connected components of a graph by the following algorithm. 
+    \begin{enumerate}
+        \item Pick any new node $v$ and run a \texttt{DFS($v$)}. 
+        \item Everything reached is a newly found connected component. 
+        \item If any node $u$ is not in that component, repeat by \texttt{DFS($u$)}. 
+    \end{enumerate}
+    We can find all connected components in $\Theta(n + m)$ time. Now we introduce the concept of strongly connectedness in digraphs. 
+    \begin{definition}[SCC]
+        A strongly connected component of a digraph is the maximal subset $V'$ of vertices such that every vertex in $V'$ is reachable from every other vertex in the set. Formally, a set $V' \subset V$ is a SCC if for all $u, v \in V'$
+        $$
+        u \rightsquigarrow v \textrm{ and } v \rightsquigarrow u
+        $$
+        where $\rightsquigarrow$ means there is a directed path to. 
+    \end{definition}
+
+    \begin{theorem}[SCC Decomposition]
+        Every directed graph can be compressed into a DAG of SCC's. 
+        $$
+        G \to G^{SCC} = (V^{SCC}, E^{SCC})
+        $$
+        where each $SCC$ is a node in $V^{SCC}$, and 
+        $$
+        E^{SCC} = \{(c_1, c_2) | (u,v) \in E \land u \in C_1, v\in C_2\},
+        $$
+        where $C_1, C_2 \in V^{SCC}$. 
+    \end{theorem}
+    Note that this digraph must be acyclic because if there was a cycle, it would have been merged into a component in SCC. This DAG is called the condensation graph and has no cycles. 
+    \begin{definition}[Transpose]
+        The transpose of the graph $G = (V, E)$ is denoted as $G^T = (V, E^T)$, where $E^T = \{(v,u) | (u, v) \in E\}$. This flips the direction of every edge. 
+    \end{definition}
+    Note that $G$ and $G^T$ have the same SCC, with directions flipped. 
+    
+    Now we transition to discussing BFS. Suppose we start with \texttt{BFS$(s)$} for $s \in V$. We have the following steps. 
+    \begin{description}
+        \item [Step 0] $L_0 = \{s\}$
+        \item [Step 1] $L_1 = $ all neighbors of $L_0$
+        \item [Step 2] $L_2 = $ all neighbors of $L_1$ that are not in $L_0$ or $L_1$. 
+        \item [Step k] $L_k = $ all neighbors of $L_{k - 1}$ that are not in $L_0, \ldots, L_{k - 1}$. 
+    \end{description}
+    
+    Below we present the algorithm for BFS. 
+    \begin{algorithm}[H]
+        \caption{\texttt{BFS($G = (V, E), s$)}}
+        \begin{algorithmic}[1]
+            \For{$v \in V$}
+                \State $found[v] = false$
+                \State $layer[v] = \infty$
+            \EndFor
+            \State $found[s] = true$ and $layer[s] = 0$
+            \State Let $i = 0$, $L_0 = s$, and $T = \emptyset$
+            \While{$L_i$ is not empty}
+                \State Initialize new layer $L_{i + 1}$
+                \For{$u \in L_i$}
+                    \For{$(u,v) \in E$}
+                        \If{$found[v] = false$}
+                            \State $found[v] = true$
+                            \State $layer[v] = i+1$
+                            \State $T \leftarrow T\cup\{(u,v)\}$
+                            \State $L_{i + 1} \leftarrow L_{i+1} \cup\{v\}$
+                        \EndIf
+                    \EndFor
+                \EndFor
+                \State $i \leftarrow i+1$
+            \EndWhile
+        \end{algorithmic}
+    \end{algorithm}
+    \begin{definition}[Distance]
+        Distance $d(u,v)$ is the number of edges in shortest path from $u$ to $v$. Note that $M = (G, d)$ is a metric space for undirected $G$. 
+    \end{definition}
+    Often times, the notion of distance needs to take into account the weights of each edge. We would like to minimize or maximize it based on our needs. Therefore, the distance of a path can now be defined as a sum of edge weights. 
+    $$
+    d(u,v) = \sum_{e_i \in u \rightsquigarrow v}w(e_i)
+    $$
+    There are three different types of shortest path problems. 
+    \begin{itemize}
+        \item \textbf{Shortest path} Give $s,t \in V$, find the shortest path from $s$ to $t$. 
+        \item \textbf{Single-source} Give $s \in V$, find shortest path from $s$ to every $t \in V$. 
+        \item \textbf{All-pairs} Find shortest path between every pair in $V$. 
+    \end{itemize}
+    Sadly, BFS will not suffice for finding shortest distance with weights. 
+\end{multicols}
+
+
+\subsection{Lecture 15: Shortest Paths in Graphs}
+\begin{multicols}{2}
+    In general, when dealing with shortest paths in graphs, we often have a weight function $w: E \to \R$ where $w(e) = w(u,v)$, and the graph is defined as $G = (V, E, w)$.  
+    \begin{definition}[Length and Distance of Weighted Path]
+        For a path $v_1 \rightsquigarrow v_k = (v_1, v_2, \ldots, v_{k - 1}, v_k)$, we define the length to be 
+        $$
+        \ell(v_1 \rightsquigarrow v_k) = \sum_{1 \leq i \leq k - 1} w(v_i, v_{i + 1})
+        $$
+        We define the distance between $u, v$ as the shortest length path. That is, 
+        $$
+        d(u,v) = \min_{u\rightsquigarrow v}\ell(u\rightsquigarrow v)
+        $$
+    \end{definition}
+    Recall the three different types of \say{shortest path}. We focus on single source shortest path (SSSP), which can be done by Dijkstra's algorithm for non-negative edge weights. Here we present the big picture of Dijkstra's algorithm. 
+    \begin{leftbar}
+        \textbf{Dijkstra's Algorithm}
+        \begin{enumerate}
+            \item Maintain a set of explored nodes $X$. Every node $u\in X$ has a known value of $d(s,u)$. 
+            \item For every node $v \notin X$, track an upper bound for $d(s,v)$ with $d(s,v) \leq d(s,u) + w(u,v)$ for $(u,v) \in E$ and $u \in X$. 
+            \item Add \say{closest} unexplored node into set $X$. 
+            \item Repeat until every node explored. 
+        \end{enumerate}
+    \end{leftbar}
+    Consider the following graph. 
+    $$
+\psmatrix[colsep=2cm,rowsep=1cm,mnode=circle, nodesep=2pt]
+  & b & d \\
+s \\
+  & c & e
+\ncline{->}{1,2}{1,3}^{2}
+\ncline{->}{2,1}{1,2}^{10}
+\ncline{->}{2,1}{3,2}_{3}
+\ncline{->}{3,2}{1,3}^{8}
+\ncline{->}{3,2}{3,3}_{2}
+\ncarc[arcangle=20]{->}{1,2}{3,2}>{4}
+\ncarc[arcangle=20]{->}{3,2}{1,2}<{1}
+\ncarc[arcangle=20]{->}{1,3}{3,3}>{9}
+\ncarc[arcangle=20]{->}{3,3}{1,3}<{7}
+\endpsmatrix
+$$
+Dijkstra's algorithm produces the following table. We start from the node $s$. 
+\bigskip
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c c c c c}
+     & $s$ & $b$ & $c$ & $d$ & $e$ \\
+     \hline\hline
+     $p(\cdot)$ & $\emptyset$ & $b$ & $s$ & $b$ & $c$ \\
+     $d_0(\cdot)$ & 0 & $\infty$ & $\infty$ & $\infty$ & $\infty$ \\
+     $d_1(\cdot)$ & 0 & 10 & 3 & $\infty$ & $\infty$ \\
+     $d_2(\cdot)$ & 0 & 7 & 3 & 11 & 5 \\
+     $d_3(\cdot)$ & 0 & 7 & 3 & 11 & 5 \\
+     $d_4(\cdot)$ & 0 & 7 & 3 & 9 & 5
+    \end{tabular}
+    \caption{Table for Dijkstra's Algorithm}
+\end{table}
+Note that DA breaks down for graphs with negative weights. We now prove DA. 
+\begin{proof}
+    Invariant: at any point in the algorithm, $d[u]$ is optimal for any $u \in X$ and $d[v]$ is best possible distance via paths using only vertices in $X$. We use an induction proof. 
+
+    For the base case of $d[s] = 0$, the optimality is trivial by definition. Now, suppose that $X$ has $k$ vertices, and node $v$ is next to be added to $X$, we need to show that $d[v]$ is optional. Now, the only way (that we have not considered) for $v$ to have a shorter path than for some path $d[u]$ and $u \in X$ is that if there were some $a\notin X$ with $(a,v) \in E$ such that $d(s\rightsquigarrow u) + d(u, v) \leq d(s \rightsquigarrow a) + d(a,,v)$. However, this is impossible since we assumed that $v$ is the closest to $X$. Therefore, $d(u, a)$ for all $u \in X$ and $a\notin X$ must be that $d(u, v) \leq d(u, a)$. Since weights non-negative, the distance $d(s\rightsquigarrow a) + d(a, v)$ cannot be shorter. 
+\end{proof}
+
+Below we present the pseudo-code for DA. 
+\bigskip
+\begin{algorithm}[H]
+    \caption{Dijkstra$(V, E, w, s)$}
+    \begin{algorithmic}[1]
+        \For{$v \in V$}
+            \State $d[u] = \infty$
+            \State $p[u] = null$
+        \EndFor
+        \State $Q = V$, and $d[s] = 0$
+        \While{$Q \neq \emptyset$}
+            \State $u = Q.pop(\arg\min_{w \in Q} d[w])$
+            \For{$(u,v) \in E$}
+                \If{$d[v] > d[u] + w(u,v)$}
+                    \State $d[v] = d[u] + w(u,v)$
+                    \State $p[v] = u$
+                \EndIf
+            \EndFor
+        \EndWhile
+        \State \Return $d,p$
+    \end{algorithmic}
+\end{algorithm}
+The runtime depends on time taken to decrease key in priority queue $T_{dec}$ and on time taken to find minium in priority queue $T_{min}$. With BST based priority queues, both are $O(\log n)$. The total runtime is $O(\abs{E}\cdot T_{dec} + \abs{V} \cdot T_{min}) = O(\abs{E}\lg \abs{V})$. 
+
+Since DA cannot handle edges with negative weights, we introduce Bellman-Ford Algorithm (BFA). We use DP to solve the problem. Each subproblem $OPT(v,j)$ is the length of the shortest path from $s\rightsquigarrow v$ using no more than $j$ edges. There are two possibilities. 
+\begin{itemize}
+    \item Use an existing path $OPT(v, j - 1)$
+    \item Use some incoming edge. In other words, $OPT(u, j - 1) + w(u, v)$ for some $(u, v) \in E$. 
+\end{itemize}
+This gives the optimality equation. 
+$$
+OPT(i, j) = 
+\begin{cases}
+    0 & v = s \\
+    \infty & v\neq s, j = 0 \\
+    \min\left\{\substack{ OPT(v, j - 1) \\ \underset{(u,v) \in E}{\min}\left(OPT(u, j - 1) + w(u,v)\right)}\right\} & \textrm{otherwise}
+\end{cases}
+$$
+Consider the following graph
+    $$
+\psmatrix[colsep=2cm,rowsep=1cm,mnode=circle, nodesep=2pt]
+  & b & e \\
+s \\
+  & c & d
+\ncline{->}{1,2}{1,3}^{2}
+\ncline{->}{2,1}{1,2}^{-1}
+\ncline{->}{2,1}{3,2}_{4}
+\ncline{->}{3,3}{3,2}_{5}
+\ncline{->}{1,2}{3,2}<{3}
+\ncline{->}{1,3}{3,3}>{-3}
+\ncarc[arcangle=15]{->}{1,2}{3,3}^{2}
+\ncarc[arcangle=15]{->}{3,3}{1,2}_{2}
+\endpsmatrix
+$$
+
+BFA gives the following table. 
+\bigskip
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c c c c c}
+        $OPT(v, j)$ & 0 & 1 & 2 & 3 & 4 \\
+        \hline
+        $s$ & 0 & 0 & 0 & 0 & 0 \\
+        $b$ & $\infty$ & $-1$ & $-1$ & $-1$ & $-1$ \\
+        $c$ & $\infty$ & $4$ & $2$ & 2 & 2 \\
+        $d$ & $\infty$ & $\infty$ & 1 & $-2$ & $-2$ \\
+        $e$ & $\infty$ & $\infty$ & 1 & 1 & 1
+    \end{tabular}
+    \caption{Table Produced by BFA}
+    \label{tab:placeholder}
+\end{table}
+
+There are 3 different places where we could optimize the space and time usage. 
+\begin{itemize}
+    \item Once we have filled in $d[v,j]$, we don't need the value $d[v, j - 1]$ anymore. This could bring space usage from $O(\abs{V}^2)$ to $O(\abs{V})$. 
+    \item We only need to check edge $(u, v)$ if $d[u, \cdot]$ changed in previous iteration. 
+    \item We can also stop the outermost loop $1\leq i \leq n - 1$ if no $d[u]$ changes during an iteration. 
+\end{itemize}
+
+This gives space of $O(\abs{V})$ and time $O(\abs{E} \cdot \abs{V})$. 
+
+Note that in the case that there is a cycle with a net negative value, BFA can forever walk through the cycle to make the net weight decrease indefinitely. The existence of such negative cycle can be detected by running BFA $n$ times. We check if there exists a vertex $v$ such that $d[v,n] < d[v,n - 1]$. If such $v$ exists, then there is a negative cycle on the shortest $s\rightsquigarrow v$ path.
+\end{multicols}
+
+\newpage
+\subsection*{Lecture 16: Minimum Spanning Trees}
+
+\begin{multicols}{2}
+
+\begin{leftbar}
+    Minimum Spanning Tree Problem
+
+    We want to build a cheap, connected graph by choosing edges to build. 
+    \begin{itemize}
+        \item \textbf{Input} A weighted undirected graph
+        \item \textbf{Output} A connected graph $G_{MST}= (V, T)$ containing all notes such that 
+        \begin{itemize}
+            \item If $u\rightsquigarrow v$ was in $G$, then $u \rightsquigarrow u$ must be in $G_{MST}$. 
+            \item The total cost, which is the sum of weights of all edges, is minimized. 
+        \end{itemize}
+    \end{itemize}
+\end{leftbar}
+
+
+$$
+\psmatrix[colsep=2cm,rowsep=0.75cm,mnode=circle, nodesep=2pt]
+  & a \\
+b &   & c \\
+  & f \\
+d &   & e \\
+  & g
+\ncline{-}{1,2}{2,1}^8
+\ncline{-}{1,2}{2,3}^5
+\ncline{-}{2,1}{2,3}^{10}
+\ncline{-}{2,1}{4,1}<{18}
+\ncline{-}{2,1}{3,2}^2
+\ncline{-}{2,3}{3,2}^{3}
+\ncline{-}{2,3}{4,3}>{16}
+\ncline{-}{3,2}{4,3}>{30}
+\ncline{-}{4,1}{3,2}^{12}
+\ncline{-}{4,1}{5,2}_4
+\ncline{-}{4,3}{5,2}_{26}
+\ncline{-}{3,2}{5,2}>{14}
+\endpsmatrix
+$$
+
+Since we want a connected graph containing all edges with minimum weight, it must be a tree. There are a few different algorithms that all compute the MST. 
+
+\begin{description}
+    \item[Prim] Start with some vertex $s$. At each step, add the cheapest edge that grows the connected component. 
+    \item[Kruskal] Start with $T = \emptyset$. Add edges in ascending weight order unless they form a cycle. 
+    \item[Reverse-Kruskal] Start with $T = E$. Delete edges in descending weight order unless it disconnects the graph. 
+    \item[Boruvka] Start with $T = \emptyset$. In each rourd, add cheapest edge out of each connected component. 
+\end{description}
+\bigskip
+\begin{algorithm}[H]
+\caption{Prim$(V, E, w)$}
+    \begin{algorithmic}[1]
+        \For{$v \in V$} 
+            \State $val[u] = \infty$, and $p[u] = null$
+            \State $val[s] = 0$, and $Q = V$
+        \EndFor
+        \While{$Q \neq \emptyset$}
+            \State $u = Q.pop(\arg\min_{v \in Q} val[v])$
+            \For{$(u,v) \in E$}
+                \If{$v \notin Q$ and $val[v] > w(u,v)$}
+                    \State $val[v] = w(u,v)$
+                    \State $p[v] = u$
+                \EndIf
+            \EndFor
+        \EndWhile
+        \State\Return $p$. 
+    \end{algorithmic}
+\end{algorithm}
+The time complexity is $O(\abs{E} \lg \abs{V})$. 
+\bigskip
+\begin{algorithm}[H]
+\caption{Kruskal}
+\begin{algorithmic}[1]
+    \State $T = \emptyset$
+    \For{$v\in V$}
+        \State $MakeSet(v)$
+    \EndFor
+    \State $E_{s} = $ sort $e$ in increasing order of $w(e)$
+    \For{$(u, v) \in E_s$}
+        \If{$FindSet(u) \neq FindSet(v)$}
+            \State $T = T\cup \{(u,v)\}$
+            \State $Union(FindSet(u), FindSet(v))$
+        \EndIf
+    \EndFor
+    \State\Return $T$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{definition}[Cut]
+    A cut $C$ is a subset of nodes $S\subset V$. A cut-set of a cut are edges that one endpoint in each cut. If a graph $G$ is cut into $C = (S, T)$, then the cut-set is $\{(u,v) \in E\ : u \in S, v\in T\}$. 
+\end{definition}
+
+\begin{theorem}[Cut and Cycle]
+    The number of intersections between the cut-set and the cycles is always even. 
+\end{theorem}
+
+As a sketch of the proof, suppose there was a cut $C = (S,T)$. If $S$ or $T$ contains a cycle within itself, the number of intersection is $0$. If there was a cycle that starts from $S$, goes into $T$, and returns back to $S$, then it has to leave $S$ and come back, which contributes an intersection number of $2$. With this theorem comes come corollaries. 
+\begin{itemize}
+    \item If a cut-edge has minimum weight, we can \textbf{safely} pick it because it is optimal. 
+    \item If an edge in a cycle has maximum weight, then it is \textbf{useless} since there are better alternative paths. This is because we can construct a cut from the cycle so that the maximum weight edge is in the cut set. By the previous point, we can pick an edge with a lower weight.  
+\end{itemize}
+
+Here we prove the correctness of Prim's algorithm. 
+\begin{proof}
+    Prim's algorithm always forms a cut set with the edges going out of the current minimum spanning tree. Since it chooses the lowest weight edge, it is always safe. 
+\end{proof}
+We now prove Kruskal's algorithm. 
+\begin{proof}
+    In Kruskal's algorithm, we either pick an edge in the cut set, or we pick an edge that's already in some component. However, Kruskal ignores all edges if forms a cycle when added, because if an edge forms a cycle, it must have a higher weight than other edges since they were already picked, making it useless. This means that we only add edges from the cut edge set. Note that the edge that we're adding is also safe, since by the definition of Kruskal, it is the edge with the smallest weight in all unseen edges, making it the safe edge. 
+\end{proof}
+\end{multicols}

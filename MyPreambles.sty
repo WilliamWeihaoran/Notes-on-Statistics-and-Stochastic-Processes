@@ -1,0 +1,194 @@
+\ProvidesPackage{MyPreambles}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc} %idk, and idc
+\usepackage[margin=1in]{geometry} 
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{mathtools}
+\usepackage{commath}
+\usepackage{amsthm}
+%\usepackage{sidecap} %captions on the side
+\usepackage{import}
+%\usepackage{siunitx}
+\usepackage{mfirstuc} %capitalizing the first letter
+\usepackage{mdframed} %framing theorems and stuff
+\usepackage{xcolor,etoolbox}
+\usepackage{array}
+\usepackage{fancyvrb}
+\usepackage{float}
+\usepackage{pstricks,pst-node,pst-tree}
+
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+
+\newcommand*{\vertbar}{\rule[-1ex]{0.5pt}{2.5ex}}
+\newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+
+\usepackage{mdframed}
+\usepackage{framed}
+\usepackage[listings,skins,breakable]{tcolorbox} %fantastic lovely beamer 
+
+
+\parindent=0pt
+\parskip=\medskipamount
+
+
+
+\usetikzlibrary{arrows}
+\pgfplotsset{compat=1.18}
+
+
+%header and footer
+\usepackage{fancyhdr}
+\fancyhf{}
+\pagestyle{fancy}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyfoot{}
+
+
+%Others
+
+
+%\usepackage{amsmath} %special math stuff
+
+
+\usepackage{amssymb} %other special stuff
+
+
+\usepackage{enumitem} %special labels
+
+\usepackage{graphicx} %insert picture
+
+\usepackage{dirtytalk} %quotation marks
+
+\newcommand*{\Rom}[1]{\MakeUppercase{\expandafter \romannumeral #1}} 
+
+\newcommand*{\rom}[1]{\expandafter \romannumeral #1}
+
+\usepackage[bookmarks=true]{hyperref} 
+\usepackage{bookmark} %bookmark and content in pdf
+
+
+
+\newcommand{\st}{\textrm{ s.t. }}
+
+\newcommand{\entry}[2]{\noindent\hangindent=2em
+\hangafter=1\index{#1}\textbf{#1} #2}
+
+% \newcommand{\term}[1]{\index{\capitalisewords{#1}}\textbf{#1}}
+\newcommand{\term}[1]{\textbf{#1}}
+
+
+
+\newmdtheoremenv[linecolor=red!90!black!70!white]{theorem}{Theorem}[subsection]
+\AtBeginEnvironment{theorem}{\begingroup\color{red!80!white}}
+\AtEndEnvironment{theorem}{\endgroup}
+
+
+\newtheorem{lemma}[theorem]{Lemma}
+\AtBeginEnvironment{lemma}{\begingroup\color{black}}
+\AtEndEnvironment{lemma}{\endgroup}
+
+
+\newtheorem{prop}[theorem]{Proposition}
+\AtBeginEnvironment{prop}{\begingroup\color{orange!50!black}}
+\AtEndEnvironment{prop}{\endgroup}
+
+
+\newtheorem{definition}[theorem]{Definition}
+\AtBeginEnvironment{definition}{\begingroup\color{blue!60!white}}
+\AtEndEnvironment{definition}{\endgroup}
+
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\AtBeginEnvironment{example}{\begingroup\color{black}}
+\AtEndEnvironment{example}{\endgroup}
+
+\theoremstyle{definition}
+\newtheorem{exercise}[theorem]{Exercise}
+\AtBeginEnvironment{exercise}{\begingroup\color{black}}
+\AtEndEnvironment{exercise}{\endgroup}
+
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\AtBeginEnvironment{remark}{\begingroup\color{black}}
+\AtEndEnvironment{remark}{\endgroup}
+
+\theoremstyle{definition}
+\newtheorem{analysis}[theorem]{Analysis}
+\AtBeginEnvironment{analysis}{\begingroup\color{black}}
+\AtEndEnvironment{analysis}{\endgroup}
+
+
+
+
+\newtheorem{coro}[theorem]{Corollary}
+\AtBeginEnvironment{coro}{\begingroup\color{yellow!85!black!40!red}}
+\AtEndEnvironment{coro}{\endgroup}
+
+
+\newenvironment{solution}{\textit{Solution.}}{\hfill\checkmark}
+
+
+% Special sets
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\GG}{\mathbb{G}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RP}{\mathbb{RP}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\Z}{\mathbb{Z}}
+\renewcommand{\H}{\mathbb{H}}
+\renewcommand{\complement}{^{{c}}}
+
+
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\ran}{ran}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\sym}{Sym}
+\DeclareMathOperator{\rep}{Rep}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\nullity}{null}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\proj}{proj}
+\DeclareMathOperator{\refl}{refl}
+\DeclareMathOperator{\adj}{adj}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\inc}{inc}
+\DeclareMathOperator{\dec}{dec}
+
+
+
+
+
+\DeclareMathOperator{\Span}{Span}
+
+
+\newcommand{\interior}[1]{{#1}^{\circ}}
+
+
+\setlist[enumerate]{label=\textbf{\arabic*.}}
+
+
+\renewenvironment{leftbar}[1][\hsize]
+{%
+    \def\FrameCommand
+    {%
+        {\color{black}\vrule width 3pt}%
+        \hspace{0pt}%must no space.
+        \fboxsep=\FrameSep\colorbox{black!5}%
+    }%
+    \MakeFramed{\hsize#1\advance\hsize-\width\FrameRestore}%
+}
+{\endMakeFramed}

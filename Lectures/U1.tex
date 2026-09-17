@@ -1,0 +1,65 @@
+\pagebreak
+\section{Unit 1: MGF and Others }
+\subsection{Topic 1: Moment Generating Functions}
+\begin{multicols}{2}
+\begin{definition}[Moment]
+The $k$th moment of a random variable $X$ is $E(X^k)$. It only exists if it is finite. 
+\end{definition}
+Note that the first moment is just the expected value of some RV. 
+\begin{definition}[MGF]
+The moment generating function (MGF) of a random variable $X$ is 
+$$
+M_X(t) = E(e^{tX}),
+$$
+provided that the expectation is finite for every $t$ in some open neighborhood of $0$. 
+\end{definition}
+The function generates moments of the RV because of the following theorem. 
+\begin{theorem}
+The $k$th moment of a random variable $X$ is the $k$th derivative of its MGF evaluated at $t = 0$. That is, 
+$$
+E(X^k) = \left[M_X(t)^{(k)}\right]_{t = 0}
+$$
+\end{theorem}
+\begin{proof}
+Recall that for a function $f(x)$, its Maclaurin series is 
+$$
+f(x) = \sum_{k = 1}^\infty \frac{x^k}{k!}f'(0).
+$$
+We expand the MGF and take its derivative. 
+\begin{align*}
+    M_X^{(k)}(t) &= \left[E(e^{tX})\right]^{(k)} \\
+    &= \left[E\left(\sum_{i = 0}^\infty \frac{(tX)^i}{i!}\right)\right]^{(k)} \\
+    &= \left[\sum_{i = 0}^\infty E\left(X^i\right)\frac{t^i}{i!}\right]^{(k)}
+\end{align*}
+At $t = 0$, all terms containing a non-zero power of $t$ vanishes, leaving behind only the term at $i = k$, which is precisely $E(X^k)$. 
+\end{proof}
+\begin{remark}
+There are a lot of tricks of finding the MGF of a RV. We list a few common ones below: 
+\begin{itemize}
+    \item Using L'Hopital's rule to check limit at $0$. 
+    \item Recognizing that a series or integral is just a different from of a common series or integral. 
+    \item Realizing that the PDF should sum/integrate to $1$ over the sample space. 
+\end{itemize}
+    
+\end{remark}
+
+\begin{theorem}
+Some properties of MGF
+\begin{itemize}
+    \item $M_x(t) = M_Y(t) \implies X = Y$
+\item $M_{aX+b}(t) = e^{bt}M_X(at)$
+    \item $M_{X+Y} = M_X(t) M_Y(t)$
+\end{itemize}
+\end{theorem}
+Below we present a table of commonly use MGF's. 
+\begin{tabular}{c|c|c|c}
+    Distr& Param & MGF & Domain \\
+    \hline\hline
+    Bernoulli & $p$ & $1 - p + pe^t$ & all $t$ \\
+    Binomial & $n, p$ & $(1 - p + pe^t)^n$ & all $t$ \\
+    Poisson & $\lambda$ & $\exp{[\lambda(e^t - 1)]}$ & all $t$ \\
+    Normal & $\mu, \sigma^2$ & $\exp[\mu t + \sigma^2t^2/2]$ & all $t$\\
+    Exp & rate $\lambda$ & $\lambda / (\lambda - t)$ & $t < \lambda$ \\
+    $\chi^2$ & $\nu$ & $(1 - 2t)^{-\nu/2}$ & $t < 1/2$
+\end{tabular}
+\end{multicols}
